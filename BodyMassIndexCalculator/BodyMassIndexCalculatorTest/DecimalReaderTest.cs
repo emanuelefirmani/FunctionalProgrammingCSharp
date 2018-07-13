@@ -48,22 +48,6 @@ namespace BodyMassIndexCalculatorTest
         }
 
         [Fact]
-        public void should_write_to_function()
-        {
-            _sut.Write("some text");
-
-            _sentTexts.Single().Should().Be("some text");
-            _sentTexts.Count.Should().Be(1);
-        }
-
-        [Fact]
-        public void should_retrieve_from_function()
-        {
-            var actual = _sut.Retrieve();
-            actual.Should().Be("42");
-        }
-
-        [Fact]
         public void read_should_use_function()
         {
             var actual = _sut.Read("some text");

@@ -25,28 +25,21 @@ namespace BodyMassIndexCalculator
         {
             var isValid = false;
             decimal value = 0;
-            
-            Write(message);
+
+            _writer(message);
             while (!isValid)
             {
                 var input = _retriever();
                 (isValid, value) = Validate(input);
-                if(!isValid) Write("Provided value isn't a valid decimal");
+                if(!isValid)
+                {
+                    _writer("Provided value isn't a valid decimal");
+                }
             }
 
-            Write(null);
-            Write(null);
+            _writer(null);
+            _writer(null);
             return value;
-        }
-
-        public void Write(string text)
-        {
-            _writer(text);
-        }
-
-        public string Retrieve()
-        {
-            return _retriever();
         }
     }
 }
