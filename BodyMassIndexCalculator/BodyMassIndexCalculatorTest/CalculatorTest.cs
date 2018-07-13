@@ -17,5 +17,17 @@ namespace BodyMassIndexCalculatorTest
             var actual = Calculator.Calculate(weight, height);
             actual.Should().Be(expected);
         }
+
+        [Xunit.Theory]
+        [InlineData(1)]
+        [InlineData(25)]
+        [InlineData(100)]
+        [InlineData(70)]
+        public void should_return_0_for_invalid_height(int weight)
+        {
+            var sut = new Calculator();
+            var actual = Calculator.Calculate(weight, 0);
+            actual.Should().Be(0);
+        }
     }
 }

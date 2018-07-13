@@ -6,6 +6,9 @@ namespace BodyMassIndexCalculator
     {
         public static decimal Calculate(int weight, decimal height)
         {
+            if (height == 0)
+                return 0;
+
             var pWeight = (double) weight;
             var pHeight = (double) height;
 
