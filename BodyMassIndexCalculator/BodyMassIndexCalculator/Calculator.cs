@@ -4,7 +4,7 @@ namespace BodyMassIndexCalculator
 {
     public class Calculator
     {
-        public static decimal Calculate(int weight, decimal height)
+        public static decimal Calculate(decimal weight, decimal height)
         {
             if (height == 0)
                 return 0;

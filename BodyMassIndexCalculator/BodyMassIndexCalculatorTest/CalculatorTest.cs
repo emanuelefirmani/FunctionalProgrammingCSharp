@@ -11,9 +11,8 @@ namespace BodyMassIndexCalculatorTest
         [InlineData(25, 5, 1)]
         [InlineData(100, 5, 4)]
         [InlineData(70, 1.7, 24.2)]
-        public void should_calculate_bmi(int weight, decimal height, decimal expected)
+        public void should_calculate_bmi(decimal weight, decimal height, decimal expected)
         {
-            var sut = new Calculator();
             var actual = Calculator.Calculate(weight, height);
             actual.Should().Be(expected);
         }
@@ -23,9 +22,8 @@ namespace BodyMassIndexCalculatorTest
         [InlineData(25)]
         [InlineData(100)]
         [InlineData(70)]
-        public void should_return_0_for_invalid_height(int weight)
+        public void should_return_0_for_invalid_height(decimal weight)
         {
-            var sut = new Calculator();
             var actual = Calculator.Calculate(weight, 0);
             actual.Should().Be(0);
         }
