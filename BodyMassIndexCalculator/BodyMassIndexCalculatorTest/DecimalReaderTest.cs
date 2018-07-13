@@ -62,5 +62,17 @@ namespace BodyMassIndexCalculatorTest
             var actual = _sut.Retrieve();
             actual.Should().Be("42");
         }
+
+        [Fact]
+        public void read_should_use_function()
+        {
+            var actual = _sut.Read("some text");
+            
+            actual.Should().Be(42);
+            _sentTexts.Count.Should().Be(3);
+            _sentTexts[0].Should().Be("some text");
+            _sentTexts[1].Should().BeNull();
+            _sentTexts[2].Should().BeNull();
+        }
     }
 }
