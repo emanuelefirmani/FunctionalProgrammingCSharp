@@ -4,6 +4,14 @@ namespace BodyMassIndexCalculator
 {
     public class DecimalReader
     {
+        private readonly Action<string> _writer;
+        public DecimalReader(){}
+        
+        public DecimalReader(Action<string> writer)
+        {
+            _writer = writer;
+        }
+
         public static (bool IsValid, decimal Value) Validate(string input)
         {
             if (decimal.TryParse(input, out var value))
@@ -28,6 +36,11 @@ namespace BodyMassIndexCalculator
             Console.WriteLine();
             Console.WriteLine();
             return value;
+        }
+
+        public void Write(string text)
+        {
+            _writer(text);
         }
     }
 }

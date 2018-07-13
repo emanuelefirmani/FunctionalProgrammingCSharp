@@ -1,4 +1,7 @@
-﻿using BodyMassIndexCalculator;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using BodyMassIndexCalculator;
 using FluentAssertions;
 using Xunit;
 
@@ -27,6 +30,19 @@ namespace BodyMassIndexCalculatorTest
         {
             var (valid, _) = DecimalReader.Validate(input);
             valid.Should().BeFalse();
+        }
+
+        [Fact]
+        public void should_write_to_function()
+        {
+            var sentTexts = new List<string>();
+            Action<string> writer = (string text) => { sentTexts.Add(text); };
+            var sut = new DecimalReader(writer);
+
+            sut.Write("some text");
+
+            sentTexts.Count.Should().Be(1);
+            sentTexts.Single().Should().Be("some text");
         }
     }
 }
