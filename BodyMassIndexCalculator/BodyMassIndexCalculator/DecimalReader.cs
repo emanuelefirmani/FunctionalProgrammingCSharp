@@ -29,7 +29,7 @@ namespace BodyMassIndexCalculator
             Write(message);
             while (!isValid)
             {
-                var input = Console.ReadLine();
+                var input = _retriever();
                 (isValid, value) = Validate(input);
                 if(!isValid) Write("Provided value isn't a valid decimal");
             }
