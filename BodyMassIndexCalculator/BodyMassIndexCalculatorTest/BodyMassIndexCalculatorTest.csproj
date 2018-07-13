@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.4.1" />
+    <PackageReference Include="xunit" Version="2.4.0-rc.2.build4045" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0-rc.2.build4045" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BodyMassIndexCalculator\BodyMassIndexCalculator.csproj" />
+  </ItemGroup>
+</Project>
