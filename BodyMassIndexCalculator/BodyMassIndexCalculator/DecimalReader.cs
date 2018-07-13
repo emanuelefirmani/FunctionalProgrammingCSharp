@@ -5,10 +5,12 @@ namespace BodyMassIndexCalculator
     public class DecimalReader
     {
         private readonly Action<string> _writer;
-        
-        public DecimalReader(Action<string> writer)
+        private readonly Func<string> _retriever;
+
+        public DecimalReader(Action<string> writer, Func<string> retriever)
         {
             _writer = writer;
+            _retriever = retriever;
         }
 
         public static (bool IsValid, decimal Value) Validate(string input)
@@ -40,6 +42,11 @@ namespace BodyMassIndexCalculator
         public void Write(string text)
         {
             _writer(text);
+        }
+
+        public string Retrieve()
+        {
+            return _retriever();
         }
     }
 }

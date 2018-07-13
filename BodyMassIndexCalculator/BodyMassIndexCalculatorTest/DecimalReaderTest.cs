@@ -15,7 +15,7 @@ namespace BodyMassIndexCalculatorTest
         public DecimalReaderTest()
         {
             _sentTexts = new List<string>();
-            _sut = new DecimalReader((text) => { _sentTexts.Add(text); });
+            _sut = new DecimalReader((text) => { _sentTexts.Add(text); }, () => "42");
         }
 
         public void Dispose()
@@ -54,6 +54,13 @@ namespace BodyMassIndexCalculatorTest
 
             _sentTexts.Single().Should().Be("some text");
             _sentTexts.Count.Should().Be(1);
+        }
+
+        [Fact]
+        public void should_retrieve_from_function()
+        {
+            var actual = _sut.Retrieve();
+            actual.Should().Be("42");
         }
     }
 }

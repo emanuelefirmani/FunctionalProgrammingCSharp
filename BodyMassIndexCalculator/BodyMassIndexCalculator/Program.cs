@@ -6,7 +6,7 @@ namespace BodyMassIndexCalculator
     {
         public static void Main()
         {
-            var reader = new DecimalReader(Console.WriteLine);
+            var reader = new DecimalReader(Console.WriteLine, Console.ReadLine);
             
             var weight = reader.Read("Please, write your weight (kg):");
             var height = reader.Read("Please, write your height (m):");
