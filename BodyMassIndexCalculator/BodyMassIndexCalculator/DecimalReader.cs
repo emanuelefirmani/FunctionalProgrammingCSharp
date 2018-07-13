@@ -5,7 +5,6 @@ namespace BodyMassIndexCalculator
     public class DecimalReader
     {
         private readonly Action<string> _writer;
-        public DecimalReader(){}
         
         public DecimalReader(Action<string> writer)
         {
@@ -25,16 +24,16 @@ namespace BodyMassIndexCalculator
             var isValid = false;
             decimal value = 0;
             
-            Console.WriteLine(message);
+            Write(message);
             while (!isValid)
             {
                 var input = Console.ReadLine();
                 (isValid, value) = Validate(input);
-                if(!isValid)Console.WriteLine("Provided value isn't a valid decimal");
+                if(!isValid) Write("Provided value isn't a valid decimal");
             }
 
-            Console.WriteLine();
-            Console.WriteLine();
+            Write(null);
+            Write(null);
             return value;
         }
 
