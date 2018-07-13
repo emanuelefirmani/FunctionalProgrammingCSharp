@@ -7,8 +7,23 @@ using Xunit;
 
 namespace BodyMassIndexCalculatorTest
 {
-    public class DecimalReaderTest
+    public class DecimalReaderTest : IDisposable
     {
+        private List<string> _sentTexts;
+        private DecimalReader _sut;
+
+        public DecimalReaderTest()
+        {
+            _sentTexts = new List<string>();
+            _sut = new DecimalReader((text) => { _sentTexts.Add(text); });
+        }
+
+        public void Dispose()
+        {
+            _sentTexts = null;
+            _sut = null;
+        }
+        
         [Theory]
         [InlineData(".5", .5)]
         [InlineData("5", 5)]
@@ -35,14 +50,10 @@ namespace BodyMassIndexCalculatorTest
         [Fact]
         public void should_write_to_function()
         {
-            var sentTexts = new List<string>();
-            Action<string> writer = (string text) => { sentTexts.Add(text); };
-            var sut = new DecimalReader(writer);
+            _sut.Write("some text");
 
-            sut.Write("some text");
-
-            sentTexts.Count.Should().Be(1);
-            sentTexts.Single().Should().Be("some text");
+            _sentTexts.Single().Should().Be("some text");
+            _sentTexts.Count.Should().Be(1);
         }
     }
 }
