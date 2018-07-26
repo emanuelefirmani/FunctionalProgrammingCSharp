@@ -10,10 +10,8 @@ namespace HonestFunctions
 {
     public static class LookupFunction
     {
-        public static Option<int> Lookup(this IEnumerable<int> list, Func<int, bool> predicate)
-        {
-            return list.Any(predicate) ? list.First(predicate) : new Option<int>();
-        }
+        public static Option<int> Lookup(this IEnumerable<int> list, Func<int, bool> predicate) =>
+            list.Any(predicate) ? list.First(predicate) : new Option<int>();
     }
 
     public class LookupFunctionTest
