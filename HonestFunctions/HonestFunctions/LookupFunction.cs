@@ -10,8 +10,8 @@ namespace HonestFunctions
 {
     public static class LookupFunction
     {
-        public static Option<int> Lookup(this IEnumerable<int> list, Func<int, bool> predicate) =>
-            list.Any(predicate) ? list.First(predicate) : new Option<int>();
+        public static Option<T> Lookup<T>(this IEnumerable<T> list, Func<T, bool> predicate) =>
+            list.Any(predicate) ? list.First(predicate) : new Option<T>();
     }
 
     public class LookupFunctionTest
@@ -48,6 +48,40 @@ namespace HonestFunctions
 
             input = new List<int> {0,2,4};
             input.Lookup(IsOdd).Equals(new None()).Should().BeTrue();
+        }       
+
+        [Fact]
+        public void should_return_right_value_for_strings()
+        {
+            bool IsCorrect(string s) => s == "ok";
+            
+            List<string> input;
+            
+            input = new List<string> {"ok"};
+            input.Lookup(IsCorrect).Equals("ok").Should().BeTrue();
+
+            input = new List<string> {"a", "b", "ok"};
+            input.Lookup(IsCorrect).Equals("ok").Should().BeTrue();
+
+            input = new List<string> {"A", "B", "ok", "C"};
+            input.Lookup(IsCorrect).Equals("ok").Should().BeTrue();
+        }       
+
+        [Fact]
+        public void should_return_none_for_strings()
+        {
+            bool IsCorrect(string s) => s == "ok";
+            
+            List<string> input;
+            
+            input = new List<string>();
+            input.Lookup(IsCorrect).Equals(new None()).Should().BeTrue();
+
+            input = new List<string> {"a"};
+            input.Lookup(IsCorrect).Equals(new None()).Should().BeTrue();
+
+            input = new List<string> {"A", "B", "C"};
+            input.Lookup(IsCorrect).Equals(new None()).Should().BeTrue();
         }       
     }
 }
