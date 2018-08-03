@@ -1,4 +1,6 @@
 ﻿using System;
+using LaYumba.Functional;
+using LaYumba.Functional.Option;
 
 namespace BodyMassIndexCalculator
 {
@@ -13,32 +15,30 @@ namespace BodyMassIndexCalculator
             _retriever = retriever;
         }
 
-        public static (bool IsValid, decimal Value) Validate(string input)
+        public static Option<decimal> Validate(string input)
         {
             if (decimal.TryParse(input, out var value))
-                return (true, value);
+                return value;
 
-            return (false, 0);
+            return new Option<decimal>();
         }
 
         public decimal Read(string message)
         {
-            var isValid = false;
             decimal value = 0;
-
+            
             _writer(message);
-            while (!isValid)
-            {
-                var input = _retriever();
-                (isValid, value) = Validate(input);
-                if(!isValid)
-                {
-                    _writer("Provided value isn't a valid decimal");
-                }
-            }
+            var readValue = Validate(_retriever());
 
-            _writer(null);
-            _writer(null);
+            readValue.Match(
+                None: () => value = Read("Provided value isn't a valid decimal"),
+                Some: (d) =>
+                {
+                    _writer(null);
+                    _writer(null);
+                    return value = d;
+                });
+
             return value;
         }
     }
