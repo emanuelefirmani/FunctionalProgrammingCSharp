@@ -3,4 +3,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="LaYumba.Functional" Version="0.9.1" />
+  </ItemGroup>
 </Project>

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using BodyMassIndexCalculator;
 using FluentAssertions;
+using LaYumba.Functional;
+using LaYumba.Functional.Option;
 using Xunit;
 
 namespace BodyMassIndexCalculatorTest
@@ -33,18 +35,17 @@ namespace BodyMassIndexCalculatorTest
         [InlineData("1,55.5", 155.5)]
         public void should_validate_decimal(string input, decimal expected)
         {
-            var (valid, actual) = DecimalReader.Validate(input);
-            valid.Should().BeTrue();
-            actual.Should().Be(expected);
+            var actual = DecimalReader.Validate(input);
+            actual.Equals(expected).Should().BeTrue();
         }
 
         [Theory]
-        [InlineData(",5", 5)]
-        [InlineData("text", 1.555)]
-        public void should_notvalidate_nondecimals(string input, decimal expected)
+        [InlineData(",5")]
+        [InlineData("text")]
+        public void should_not_validate_non_decimals(string input)
         {
-            var (valid, _) = DecimalReader.Validate(input);
-            valid.Should().BeFalse();
+            var actual = DecimalReader.Validate(input);
+            actual.Equals(new Option<decimal>()).Should().BeTrue();
         }
 
         [Fact]
