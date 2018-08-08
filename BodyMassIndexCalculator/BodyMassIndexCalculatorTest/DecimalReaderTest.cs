@@ -36,7 +36,7 @@ namespace BodyMassIndexCalculatorTest
         public void should_validate_decimal(string input, decimal expected)
         {
             var actual = DecimalReader.Validate(input);
-            actual.Equals(expected).Should().BeTrue();
+            actual.Should().Be((Option<decimal>)expected);
         }
 
         [Theory]
@@ -45,7 +45,7 @@ namespace BodyMassIndexCalculatorTest
         public void should_not_validate_non_decimals(string input)
         {
             var actual = DecimalReader.Validate(input);
-            actual.Equals(new Option<decimal>()).Should().BeTrue();
+            actual.Should().Be(new Option<decimal>());
         }
 
         [Fact]
