@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using FluentAssertions;
 using LaYumba.Functional;
@@ -10,8 +9,11 @@ namespace FunctorsMonads
 {
     public static class WorkPermitExtensions
     {
+        private static Option<Employee> GetEmployee(this IReadOnlyDictionary<string, Employee> people, string employeeId)
+            => people.ContainsKey(employeeId) ? people[employeeId] : null;
+
         public static Option<WorkPermit> GetWorkPermit(this Dictionary<string, Employee> people, string employeeId)
-            => people.ContainsKey(employeeId) ? people[employeeId].WorkPermit : null;
+            => people.GetEmployee(employeeId).Bind((v) => v.WorkPermit);
     }
 
     public class Employee
