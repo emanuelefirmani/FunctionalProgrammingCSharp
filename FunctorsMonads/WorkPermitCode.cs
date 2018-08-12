@@ -17,16 +17,20 @@ namespace FunctorsMonads
 
         private static bool IsActive(WorkPermit permit) => permit.Expiry > DateTime.Now;
 
-        public static double AverageYearsWorkedAtTheCompany(this List<Employee> employees)
+        public static double AverageYearsWorkedAtTheCompany(this IEnumerable<Employee> employees)
         {
-            return employees.Any() ? employees.First().GetYearsWorked() : 0;
+            var years = employees.Bind((e) => e.LeftOn.Map((d) => GetDiffInYear(e.JoinedOn, d))).ToList();
+
+            return years.Any() ? years.Average() : 0;
         }
 
-        public static double GetYearsWorked(this Employee employee) =>
+        private static double GetYearsWorked(this Employee employee) =>
             employee.LeftOn.Match(
-                () => (DateTime.Now - employee.JoinedOn).Days / 365,
-                (v) => (v - employee.JoinedOn).Days / 365
+                () => GetDiffInYear(employee.JoinedOn, DateTime.Now),
+                (v) => GetDiffInYear(employee.JoinedOn, v)
             );
+
+        private static double GetDiffInYear(DateTime from, DateTime to) => (to - from).Days / 365.0;
     }
 
     public class Employee
@@ -75,7 +79,7 @@ namespace FunctorsMonads
         }
 
         [Fact]
-        public void should_return_workpermit()
+        public void should_return_WorkPermit()
         {
             var sut = new Dictionary<string, Employee>
             {
@@ -95,17 +99,34 @@ namespace FunctorsMonads
         }
 
         [Fact]
-        public void ayw_should_return_1_for_oneelement_list()
+        public void ayw_should_return_0_for_list_with_working_employees()
         {
-            var sut = new List<Employee> {new Employee {JoinedOn = new DateTime(2000, 1, 1), LeftOn = new DateTime(2010, 1, 1)}};
-            sut.AverageYearsWorkedAtTheCompany().Should().Be(10);
+            var sut = new List<Employee>
+            {
+                new Employee {JoinedOn = new DateTime(2000, 1, 1)},
+                new Employee {JoinedOn = new DateTime(2006, 1, 1)},
+                new Employee {JoinedOn = new DateTime(3006, 1, 1)},
+            };
+            sut.AverageYearsWorkedAtTheCompany().Should().Be(0);
         }
 
         [Fact]
-        public void ayw_should_return_1_for_oneelement_list_still_working()
+        public void ayw_should_return_1_for_one_element_list()
         {
-            var sut = new List<Employee> {new Employee {JoinedOn = DateTime.Now.AddYears(-10)}};
-            sut.AverageYearsWorkedAtTheCompany().Should().Be(10);
+            var sut = new List<Employee> {new Employee {JoinedOn = new DateTime(2000, 1, 1), LeftOn = new DateTime(2010, 1, 1)}};
+            sut.AverageYearsWorkedAtTheCompany().Should().BeInRange(9.9, 10.1);
+        }
+        
+        [Fact]
+        public void ayw_should_return_1_for_three_element_list()
+        {
+            var sut = new List<Employee>
+            {
+                new Employee {JoinedOn = new DateTime(2000, 1, 1), LeftOn = new DateTime(2010, 1, 1)},
+                new Employee {JoinedOn = new DateTime(2006, 1, 1), LeftOn = new DateTime(2010, 1, 1)},
+                new Employee {JoinedOn = new DateTime(3006, 1, 1), LeftOn = new DateTime(3010, 1, 1)},
+            };
+            sut.AverageYearsWorkedAtTheCompany().Should().BeInRange(5.9, 6.1);
         }
     }
 }
