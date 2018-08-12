@@ -10,7 +10,7 @@ namespace FunctorsMonads
     public static class OptionMapper
     {
         public static Option<R> Map<T, R>(this Option<T> input, Func<T, R> f) =>
-             input.Bind((v) => (Option<R>)f(v));
+            input.Bind((v) => (Option<R>)f(v));
     }
 
     public class OptionMapperTest
