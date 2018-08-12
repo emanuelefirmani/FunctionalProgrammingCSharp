@@ -17,6 +17,11 @@ namespace FunctorsMonads
                 () => new Option<WorkPermit>(),
                 (v) => v.Expiry > DateTime.Now ? v : new Option<WorkPermit>()
             );
+
+        public static double AverageYearsWorkedAtTheCompany(this List<Employee> employees)
+        {
+            return 0;
+        }
     }
 
     public class Employee
@@ -75,6 +80,13 @@ namespace FunctorsMonads
             };
             var actual = sut.GetWorkPermit("id2").AsEnumerable().Single();
             actual.Number.Should().Be("42");
+        }
+
+        [Fact]
+        public void ayw_should_return_0_for_empty_list()
+        {
+            var sut = new List<Employee>();
+            sut.AverageYearsWorkedAtTheCompany().Should().Be(0);
         }
     }
 }
