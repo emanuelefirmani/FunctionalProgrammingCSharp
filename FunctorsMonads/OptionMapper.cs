@@ -9,10 +9,8 @@ namespace FunctorsMonads
 {
     public static class OptionMapper
     {
-        public static Option<R> Map<T, R>(this Option<T> input, Func<T, R> f)
-        {
-            return new Option<R>();
-        }
+        public static Option<R> Map<T, R>(this Option<T> input, Func<T, R> f) =>
+             input.Bind((v) => (Option<R>)f(v));
     }
 
     public class OptionMapperTest
@@ -27,6 +25,19 @@ namespace FunctorsMonads
             var actual = sut.Map(F);
 
             actual.Should().Be(new Option<int>());
+        }
+
+
+        [Fact]
+        public void should_map_Option_with_integer_to_string()
+        {
+            var sut = (Option<int>)5;
+
+            string F(int n) => n.ToString();
+
+            var actual = sut.Map(F);
+
+            actual.Should().Be((Option<string>)"5");
         }
     }
 }
