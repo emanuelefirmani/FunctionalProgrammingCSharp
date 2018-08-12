@@ -13,10 +13,9 @@ namespace FunctorsMonads
             => people.ContainsKey(employeeId) ? people[employeeId] : null;
 
         public static Option<WorkPermit> GetWorkPermit(this Dictionary<string, Employee> people, string employeeId)
-            => people.GetEmployee(employeeId).Bind((v) => v.WorkPermit).Match(
-                () => new Option<WorkPermit>(),
-                (v) => v.Expiry > DateTime.Now ? v : new Option<WorkPermit>()
-            );
+            => people.GetEmployee(employeeId).Bind((v) => v.WorkPermit).Where(IsActive);
+
+        private static bool IsActive(WorkPermit permit) => permit.Expiry > DateTime.Now;
 
         public static double AverageYearsWorkedAtTheCompany(this List<Employee> employees)
         {
