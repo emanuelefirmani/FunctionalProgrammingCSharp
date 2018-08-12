@@ -20,8 +20,14 @@ namespace FunctorsMonads
 
         public static double AverageYearsWorkedAtTheCompany(this List<Employee> employees)
         {
-            return 0;
+            return employees.Any() ? employees.First().GetYearsWorked() : 0;
         }
+
+        public static double GetYearsWorked(this Employee employee) =>
+            employee.LeftOn.Match(
+                () => (DateTime.Now - employee.JoinedOn).Days / 365,
+                (v) => (v - employee.JoinedOn).Days / 365
+            );
     }
 
     public class Employee
@@ -87,6 +93,20 @@ namespace FunctorsMonads
         {
             var sut = new List<Employee>();
             sut.AverageYearsWorkedAtTheCompany().Should().Be(0);
+        }
+
+        [Fact]
+        public void ayw_should_return_1_for_oneelement_list()
+        {
+            var sut = new List<Employee> {new Employee {JoinedOn = new DateTime(2000, 1, 1), LeftOn = new DateTime(2010, 1, 1)}};
+            sut.AverageYearsWorkedAtTheCompany().Should().Be(10);
+        }
+
+        [Fact]
+        public void ayw_should_return_1_for_oneelement_list_still_working()
+        {
+            var sut = new List<Employee> {new Employee {JoinedOn = DateTime.Now.AddYears(-10)}};
+            sut.AverageYearsWorkedAtTheCompany().Should().Be(10);
         }
     }
 }
