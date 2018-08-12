@@ -13,7 +13,10 @@ namespace FunctorsMonads
             => people.ContainsKey(employeeId) ? people[employeeId] : null;
 
         public static Option<WorkPermit> GetWorkPermit(this Dictionary<string, Employee> people, string employeeId)
-            => people.GetEmployee(employeeId).Bind((v) => v.WorkPermit);
+            => people.GetEmployee(employeeId).Bind((v) => v.WorkPermit).Match(
+                () => new Option<WorkPermit>(),
+                (v) => v.Expiry > DateTime.Now ? v : new Option<WorkPermit>()
+            );
     }
 
     public class Employee
@@ -53,13 +56,22 @@ namespace FunctorsMonads
         }
 
         [Fact]
-        public void should_return_employee()
+        public void should_return_none_when_expired()
+        {
+            var sut = new Dictionary<string, Employee>
+                {{"id", new Employee {WorkPermit = new WorkPermit {Number = "42", Expiry = new DateTime(2000, 1, 1)}}}};
+            var actual = sut.GetWorkPermit("id");
+            actual.Should().Be(new Option<WorkPermit>());
+        }
+
+        [Fact]
+        public void should_return_workpermit()
         {
             var sut = new Dictionary<string, Employee>
             {
-                {"id1", new Employee { WorkPermit = new WorkPermit{ Number = "1"}}},
-                {"id2", new Employee { WorkPermit = new WorkPermit{ Number = "42"}}},
-                {"id3", new Employee { WorkPermit = new WorkPermit{ Number = "102"}}},
+                {"id1", new Employee { WorkPermit = new WorkPermit{ Number = "1", Expiry = new DateTime(3000, 1, 1)}}},
+                {"id2", new Employee { WorkPermit = new WorkPermit{ Number = "42", Expiry = new DateTime(3000, 1, 1)}}},
+                {"id3", new Employee { WorkPermit = new WorkPermit{ Number = "102", Expiry = new DateTime(3000, 1, 1)}}},
             };
             var actual = sut.GetWorkPermit("id2").AsEnumerable().Single();
             actual.Number.Should().Be("42");
