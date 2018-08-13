@@ -17,11 +17,11 @@ namespace FunctorsMonads
 
         private static bool IsActive(WorkPermit permit) => permit.Expiry > DateTime.Now;
 
-        public static double AverageYearsWorkedAtTheCompany(this IEnumerable<Employee> employees)
+        public static Option<double> AverageYearsWorkedAtTheCompany(this IEnumerable<Employee> employees)
         {
             var years = employees.Bind((e) => e.LeftOn.Map((d) => GetDiffInYear(e.JoinedOn, d))).ToList();
 
-            return years.Any() ? years.Average() : 0;
+            return years.Any() ? years.Average() : new Option<double>();
         }
 
         private static double GetYearsWorked(this Employee employee) =>
@@ -92,14 +92,14 @@ namespace FunctorsMonads
         }
 
         [Fact]
-        public void ayw_should_return_0_for_empty_list()
+        public void ayw_should_return_none_for_empty_list()
         {
             var sut = new List<Employee>();
-            sut.AverageYearsWorkedAtTheCompany().Should().Be(0);
+            sut.AverageYearsWorkedAtTheCompany().Should().Be(new Option<double>());
         }
 
         [Fact]
-        public void ayw_should_return_0_for_list_with_working_employees()
+        public void ayw_should_return_none_for_list_with_working_employees()
         {
             var sut = new List<Employee>
             {
@@ -107,18 +107,18 @@ namespace FunctorsMonads
                 new Employee {JoinedOn = new DateTime(2006, 1, 1)},
                 new Employee {JoinedOn = new DateTime(3006, 1, 1)},
             };
-            sut.AverageYearsWorkedAtTheCompany().Should().Be(0);
+            sut.AverageYearsWorkedAtTheCompany().Should().Be(new Option<double>());
         }
 
         [Fact]
         public void ayw_should_return_1_for_one_element_list()
         {
             var sut = new List<Employee> {new Employee {JoinedOn = new DateTime(2000, 1, 1), LeftOn = new DateTime(2010, 1, 1)}};
-            sut.AverageYearsWorkedAtTheCompany().Should().BeInRange(9.9, 10.1);
+            (sut.AverageYearsWorkedAtTheCompany().AsEnumerable().Single() - 10).Should().BeInRange(-0.01, 0.01);
         }
         
         [Fact]
-        public void ayw_should_return_1_for_three_element_list()
+        public void ayw_should_return_6_for_three_element_list()
         {
             var sut = new List<Employee>
             {
@@ -126,7 +126,19 @@ namespace FunctorsMonads
                 new Employee {JoinedOn = new DateTime(2006, 1, 1), LeftOn = new DateTime(2010, 1, 1)},
                 new Employee {JoinedOn = new DateTime(3006, 1, 1), LeftOn = new DateTime(3010, 1, 1)},
             };
-            sut.AverageYearsWorkedAtTheCompany().Should().BeInRange(5.9, 6.1);
+            (sut.AverageYearsWorkedAtTheCompany().AsEnumerable().Single() - 6).Should().BeInRange(-0.01, 0.01);
+        }
+
+        [Fact]
+        public void ayw_should_consider_only_employees_that_left()
+        {
+            var sut = new List<Employee>
+            {
+                new Employee {JoinedOn = new DateTime(2000, 1, 1)},
+                new Employee {JoinedOn = new DateTime(2006, 1, 1)},
+                new Employee {JoinedOn = new DateTime(3000, 1, 1), LeftOn = new DateTime(3010, 1, 1)},
+            };
+            (sut.AverageYearsWorkedAtTheCompany().AsEnumerable().Single() - 10).Should().BeInRange(-0.01, 0.01);
         }
     }
 }
