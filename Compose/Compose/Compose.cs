@@ -7,7 +7,7 @@ namespace Compose
     public class Compose
     {
         public static Func<T, T> ComposeFunctions<T>(Func<T, T> f, Func<T, T> g) =>
-            new Func<T, T>(x => f(g(x)));
+            x => f(g(x));
     }
 
     public class ComposeText
@@ -19,10 +19,10 @@ namespace Compose
         [InlineData(3, 16)]
         public void should_compose_int_functions(int value, int expected)
         {
-            int sqr(int x) => x * x;
-            int sum1(int x) => x + 1;
+            int Sqr(int x) => x * x;
+            int Sum1(int x) => x + 1;
 
-            var f = Compose.ComposeFunctions<int>(sqr, sum1);
+            var f = Compose.ComposeFunctions<int>(Sqr, Sum1);
 
             f(value).Should().Be(expected);
         }
@@ -34,10 +34,10 @@ namespace Compose
         [InlineData(3, 10)]
         public void should_compose_int_functions2(int value, int expected)
         {
-            int sqr(int x) => x * x;
-            int sum1(int x) => x + 1;
+            int Sqr(int x) => x * x;
+            int Sum1(int x) => x + 1;
 
-            var f = Compose.ComposeFunctions<int>(sum1, sqr);
+            var f = Compose.ComposeFunctions<int>(Sum1, Sqr);
             
             f(value).Should().Be(expected);
         }
@@ -47,12 +47,10 @@ namespace Compose
         [InlineData("123", "123ba")]
         public void should_compose_string_functions(string value, string expected)
         {
-            int i = 0;
-            
-            string concata(string x) => x + "a";
-            string concatb(string x) => x + "b";
+            string Concata(string x) => x + "a";
+            string Concatb(string x) => x + "b";
 
-            var f = Compose.ComposeFunctions<string>(concata, concatb);
+            var f = Compose.ComposeFunctions<string>(Concata, Concatb);
             
             f(value).Should().Be(expected);
         }
@@ -62,12 +60,10 @@ namespace Compose
         [InlineData("123", "123ab")]
         public void should_compose_string_functions2(string value, string expected)
         {
-            int i = 0;
-            
-            string concata(string x) => x + "a";
-            string concatb(string x) => x + "b";
+            string Concata(string x) => x + "a";
+            string Concatb(string x) => x + "b";
 
-            var f = Compose.ComposeFunctions<string>(concatb, concata);
+            var f = Compose.ComposeFunctions<string>(Concatb, Concata);
             
             f(value).Should().Be(expected);
         }
