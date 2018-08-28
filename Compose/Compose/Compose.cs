@@ -6,8 +6,8 @@ namespace Compose
 {
     public class Compose
     {
-        public static Func<int, int> ComposeFunctions(Func<int, int> f, Func<int, int> g) =>
-            new Func<int, int>(x => f(g(x)));
+        public static Func<T, T> ComposeFunctions<T>(Func<T, T> f, Func<T, T> g) =>
+            new Func<T, T>(x => f(g(x)));
     }
 
     public class ComposeText
@@ -22,7 +22,7 @@ namespace Compose
             int sqr(int x) => x * x;
             int sum1(int x) => x + 1;
 
-            var f = Compose.ComposeFunctions(sqr, sum1);
+            var f = Compose.ComposeFunctions<int>(sqr, sum1);
 
             f(value).Should().Be(expected);
         }
@@ -37,8 +37,38 @@ namespace Compose
             int sqr(int x) => x * x;
             int sum1(int x) => x + 1;
 
-            var f = Compose.ComposeFunctions(sum1, sqr);
+            var f = Compose.ComposeFunctions<int>(sum1, sqr);
+            
+            f(value).Should().Be(expected);
+        }
 
+        [Theory]
+        [InlineData("test", "testba")]
+        [InlineData("123", "123ba")]
+        public void should_compose_string_functions(string value, string expected)
+        {
+            int i = 0;
+            
+            string concata(string x) => x + "a";
+            string concatb(string x) => x + "b";
+
+            var f = Compose.ComposeFunctions<string>(concata, concatb);
+            
+            f(value).Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData("test", "testab")]
+        [InlineData("123", "123ab")]
+        public void should_compose_string_functions2(string value, string expected)
+        {
+            int i = 0;
+            
+            string concata(string x) => x + "a";
+            string concatb(string x) => x + "b";
+
+            var f = Compose.ComposeFunctions<string>(concatb, concata);
+            
             f(value).Should().Be(expected);
         }
     }
